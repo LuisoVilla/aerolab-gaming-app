@@ -8,13 +8,13 @@ import {
 import { ArrowBack } from "@mui/icons-material";
 import { useRouter, usePathname } from "next/navigation";
 import SearchCombobox from "./SearchCombobox";
+import { Swords } from "lucide-react";
 
 interface SearchHeaderProps {
-  floatingLetters: React.ReactNode;
   children: React.ReactNode;
 }
 
-export default function SearchHeader({ floatingLetters, children }: SearchHeaderProps) {
+export default function SearchHeader({ children }: SearchHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   
@@ -23,13 +23,9 @@ export default function SearchHeader({ floatingLetters, children }: SearchHeader
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #F4D4F7 0%, #E8C5E8 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Floating Letters */}
-      {floatingLetters}
-
       {/* Header */}
       <Box sx={{ 
         p: 2, 
@@ -44,9 +40,9 @@ export default function SearchHeader({ floatingLetters, children }: SearchHeader
             <IconButton 
               onClick={() => router.back()}
               sx={{ 
-                color: '#8B5A96',
+                color: '#6727A6',
                 '&:hover': {
-                  backgroundColor: 'rgba(139, 90, 150, 0.1)'
+                  backgroundColor: 'rgba(103, 39, 166, 0.1)'
                 }
               }}
             >
@@ -65,6 +61,45 @@ export default function SearchHeader({ floatingLetters, children }: SearchHeader
 
         {/* Search Combobox */}
         <Box sx={{ maxWidth: 400, flex: 1, mx: 4 }}>
+           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3, mt: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              border: '2px solid #FF00AE',
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mr: 1.5,
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              transition: 'box-shadow 0.2s',
+              '&:hover': {
+                boxShadow: '0 0 0 2px #FF00AE33',
+              },
+            }}
+            onClick={() => router.push('/')}
+            role="button"
+            tabIndex={0}
+            aria-label="Go to home"
+          >
+            <Swords size={28} color="#000000" />
+          </Box>
+          <Typography 
+            variant="h5" 
+            component="h1"
+            sx={{ 
+              fontWeight: 'bold',
+              color: '#6727A6',
+              letterSpacing: 0.5
+            }}
+          >
+            Gaming Haven Z
+          </Typography>
+        </Box>
+      </Box>
           <SearchCombobox placeholder="Search games..." />
         </Box>
 

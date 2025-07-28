@@ -13,6 +13,7 @@ import { Star, CalendarMonth, VideogameAsset } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useGameStore } from "../../../store/gameStore";
+import { useToastContext } from "../../../context/ToastContext";
 
 interface Game {
   id: number;
@@ -65,6 +66,7 @@ export default function GameDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addGame, isGameCollected } = useGameStore();
+  const { showGameCollected } = useToastContext();
 
   const gameId = params.id as string;
   const isCollected = game ? isGameCollected(game.id) : false;
@@ -80,6 +82,9 @@ export default function GameDetail() {
         involved_companies: game.involved_companies,
         genres: game.genres
       });
+      
+      // Mostrar toast de éxito
+      showGameCollected(game.name);
     }
   };
 
@@ -116,12 +121,11 @@ export default function GameDetail() {
     return (
       <Box sx={{ 
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F4D4F7 0%, #E8C5E8 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <CircularProgress sx={{ color: '#8B5A96' }} size={60} />
+        <CircularProgress sx={{ color: '#6727A6' }} size={60} />
       </Box>
     );
   }
@@ -130,13 +134,12 @@ export default function GameDetail() {
     return (
       <Box sx={{ 
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F4D4F7 0%, #E8C5E8 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}>
         <Container maxWidth="sm" sx={{ textAlign: 'center' }}>
-          <Typography variant="h4" sx={{ color: '#8B5A96', mb: 2 }}>
+          <Typography variant="h4" sx={{ color: '#6727A6', mb: 2 }}>
             {error === 'Game not found' ? 'Game Not Found' : 'Error Loading Game'}
           </Typography>
           <Typography variant="body1" sx={{ color: '#666', mb: 3 }}>
@@ -146,8 +149,8 @@ export default function GameDetail() {
             variant="contained"
             onClick={() => router.push('/')}
             sx={{ 
-              backgroundColor: '#8B5A96',
-              '&:hover': { backgroundColor: '#7A4A86' }
+              backgroundColor: '#6727A6',
+              '&:hover': { backgroundColor: '#5A1F8B' }
             }}
           >
             Back to Home
@@ -172,7 +175,6 @@ export default function GameDetail() {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #F4D4F7 0%, #E8C5E8 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -206,12 +208,19 @@ export default function GameDetail() {
                 onClick={handleCollectGame}
                 disabled={isCollected}
                 sx={{ 
-                  backgroundColor: isCollected ? '#A0A0A0' : '#8B5A96',
+                  backgroundColor: isCollected ? '#FFFFFF' : '#3C1661',
+                  color: isCollected ? '#3C1661' : '#FFFFFF',
+                  border: isCollected ? '2px solid #3C1661' : 'none',
                   borderRadius: '25px',
                   px: 4,
                   py: 1.5,
                   '&:hover': {
-                    backgroundColor: isCollected ? '#A0A0A0' : '#7A4A86'
+                    backgroundColor: isCollected ? '#FFFFFF' : '#2A0F47'
+                  },
+                  '&.Mui-disabled': {
+                    backgroundColor: '#FFFFFF',
+                    color: '#3C1661',
+                    border: '2px solid #3C1661'
                   }
                 }}
               >
@@ -223,7 +232,7 @@ export default function GameDetail() {
           {/* Game Details */}
           <Box sx={{ flex: 1, minWidth: 400 }}>
             <Box sx={{ mb: 3 }}>
-              <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#8B5A96', mb: 1 }}>
+              <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 1 }}>
                 {title}
               </Typography>
               <Typography variant="h6" sx={{ color: '#666', mb: 2 }}>
@@ -234,7 +243,7 @@ export default function GameDetail() {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3, flexWrap: 'wrap' }}>
                 {rating && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Star sx={{ color: '#8B5A96' }} />
+                    <Star sx={{ color: '#3C1661' }} />
                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                       Rating: {rating}/100
                     </Typography>
@@ -242,14 +251,14 @@ export default function GameDetail() {
                 )}
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CalendarMonth sx={{ color: '#8B5A96' }} />
+                  <CalendarMonth sx={{ color: '#3C1661' }} />
                   <Typography variant="body1">
                     Release: {releaseDate}
                   </Typography>
                 </Box>
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <VideogameAsset sx={{ color: '#8B5A96' }} />
+                  <VideogameAsset sx={{ color: '#3C1661' }} />
                   <Typography variant="body1">
                     Genre: {genres}
                   </Typography>
@@ -258,7 +267,7 @@ export default function GameDetail() {
 
               {/* Summary */}
               <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#8B5A96', mb: 2 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
                   Summary
                 </Typography>
                 <Typography variant="body1" sx={{ lineHeight: 1.8, color: '#555' }}>
@@ -268,7 +277,7 @@ export default function GameDetail() {
 
               {/* Platforms */}
               <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#8B5A96', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
                   Platforms
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#555' }}>
@@ -279,7 +288,7 @@ export default function GameDetail() {
               {/* Media */}
               {screenshots.length > 0 && (
                 <Box sx={{ mb: 4 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#8B5A96', mb: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
                     Screenshots
                   </Typography>
                   
@@ -308,7 +317,7 @@ export default function GameDetail() {
         {/* Similar Games */}
         {similarGames.length > 0 && (
           <Box sx={{ mt: 6 }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#8B5A96', mb: 3 }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 3 }}>
               Similar games
             </Typography>
             

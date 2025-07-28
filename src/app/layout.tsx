@@ -8,6 +8,7 @@ import {
   createTheme
 } from "@mui/material";
 import { SearchProvider } from "../context/SearchContext";
+import { ToastProvider } from "../context/ToastContext";
 import SearchHeader from "../components/SearchHeader";
 
 const geistSans = Geist({
@@ -23,62 +24,27 @@ const geistMono = Geist_Mono({
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#8B5A96',
+      main: '#6727A6',
     },
   },
 });
 
-const FloatingLetter = ({ letter, top, left, size = 40 }: {
-  letter: string;
-  top: number;
-  left: number;
-  size?: number;
-}) => (
-  <Box
-    sx={{
-      position: 'absolute',
-      top: `${top}%`,
-      left: `${left}%`,
-      width: size,
-      height: size,
-      borderRadius: '50%',
-      backgroundColor: 'rgba(255, 255, 255, 0.3)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '18px',
-      fontWeight: 'bold',
-      color: '#8B5A96',
-      animation: 'float 6s ease-in-out infinite',
-      '@keyframes float': {
-        '0%, 100%': { transform: 'translateY(0px)' },
-        '50%': { transform: 'translateY(-20px)' },
-      },
-    }}
-  >
-    {letter}
-  </Box>
-);
-
 function LayoutContent({ children }: { children: React.ReactNode }) {
-  const floatingLetters = (
-    <>
-      <FloatingLetter letter="A" top={10} left={15} />
-      <FloatingLetter letter="D" top={8} left={85} />
-      <FloatingLetter letter="V" top={20} left={92} />
-      <FloatingLetter letter="S" top={35} left={8} />
-      <FloatingLetter letter="W" top={45} left={5} />
-      <FloatingLetter letter="G" top={60} left={90} />
-      <FloatingLetter letter="Z" top={75} left={85} />
-    </>
-  );
 
   return (
     <ThemeProvider theme={theme}>
       <SearchProvider>
-        <SearchHeader floatingLetters={floatingLetters}>
-          {children}
-        </SearchHeader>
+        <ToastProvider>
+          <Box sx={{ 
+            minHeight: '100vh',
+            background: 'linear-gradient(180deg, #E7C0DB 0%, #F0D4E8 25%, #F8E8F4 50%, #FCEFF9 75%, #FFFFFF 100%)',
+            position: 'relative'
+          }}>
+            <SearchHeader >
+              {children}
+            </SearchHeader>
+          </Box>
+        </ToastProvider>
       </SearchProvider>
     </ThemeProvider>
   );

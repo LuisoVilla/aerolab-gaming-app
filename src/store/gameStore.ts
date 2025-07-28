@@ -51,11 +51,31 @@ export const useGameStore = create<GameStore>()(
 
           // Sort by release date for newest (most recent release first)
           const updatedNewest = [...state.newest.filter(g => g.id !== game.id), newGame]
-            .sort((a, b) => (b.first_release_date || 0) - (a.first_release_date || 0));
+            .sort((a, b) => {
+              const dateA = a.first_release_date || 0;
+              const dateB = b.first_release_date || 0;
+              // If both have no date, maintain original order
+              if (dateA === 0 && dateB === 0) return 0;
+              // Games with no date go to the end
+              if (dateA === 0) return 1;
+              if (dateB === 0) return -1;
+              // Sort newest first (higher timestamp first)
+              return dateB - dateA;
+            });
 
           // Sort by release date for oldest (oldest release first)
           const updatedOldest = [...state.oldest.filter(g => g.id !== game.id), newGame]
-            .sort((a, b) => (a.first_release_date || 0) - (b.first_release_date || 0));
+            .sort((a, b) => {
+              const dateA = a.first_release_date || 0;
+              const dateB = b.first_release_date || 0;
+              // If both have no date, maintain original order
+              if (dateA === 0 && dateB === 0) return 0;
+              // Games with no date go to the end
+              if (dateA === 0) return 1;
+              if (dateB === 0) return -1;
+              // Sort oldest first (lower timestamp first)
+              return dateA - dateB;
+            });
 
           return {
             lastAdded: updatedLastAdded,

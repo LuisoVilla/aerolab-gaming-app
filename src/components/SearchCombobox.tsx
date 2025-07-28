@@ -23,7 +23,7 @@ interface SearchComboboxProps {
   placeholder?: string;
 }
 
-export default function SearchCombobox({ placeholder = "Search games..." }: SearchComboboxProps) {
+export default function SearchCombobox({ placeholder = "Search gamesssss..." }: SearchComboboxProps) {
   const { searchQuery, setSearchQuery, searchGames, games, loading } = useSearch();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -121,10 +121,10 @@ export default function SearchCombobox({ placeholder = "Search games..." }: Sear
                 borderColor: '#E0E0E0',
               },
               '&:hover fieldset': {
-                borderColor: '#8B5A96',
+                borderColor: '#6727A6',
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#8B5A96',
+                borderColor: '#6727A6',
                 borderWidth: '2px',
               },
             },
@@ -151,7 +151,7 @@ export default function SearchCombobox({ placeholder = "Search games..." }: Sear
               <Box sx={{
                 width: 16,
                 height: 16,
-                border: '2px solid #8B5A96',
+                border: '2px solid #6727A6',
                 borderTop: '2px solid transparent',
                 borderRadius: '50%',
                 animation: 'spin 1s linear infinite',

@@ -1,0 +1,8 @@
+POST https://id.twitch.tv/oauth2/token?client_id=rhm8nw18h8rw8a4wyuz3zqar0qb4zi&client_secret=7rly0sgsolwyww2zsx0rqp3rnuhjdb&grant_type=client_credentials
+
+### Buscar juegos
+//POST https://api.igdb.com/v4/games
+Client-ID: rhm8nw18h8rw8a4wyuz3zqar0qb4zi
+Authorization: Bearer xqq02ck4hb10nt1frp0yb3uvjrc814
+Accept: application/json
+Content-Type: text/plain

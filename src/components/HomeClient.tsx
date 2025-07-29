@@ -11,6 +11,7 @@ import {
   GRAY_LIGHT
 } from "../lib/constants/colors";
 import { useGameStore } from "../store/gameStore";
+import styles from "./HomeClient.module.css";
 
 export default function HomeClient() {
   const [activeFilter, setActiveFilter] = useState<"Last added" | "Newest" | "Oldest">("Last added");
@@ -39,54 +40,36 @@ export default function HomeClient() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ pt: 6, position: 'relative', justifyContent: 'center' }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography 
-          variant="h5" 
-          sx={{ fontWeight: 'bold', color: PURPLE, textAlign: 'center', mb: 2 }}
-        >
-          Saved games
-        </Typography>
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 2,
-          mb: 4,
-          ml: 0.5,
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          // backgroundColor: WHITE,
-          boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
-        }}>
-          {(["Last added", "Newest", "Oldest"] as const).map((filter) => (
-            <Chip
-              key={filter}
-              label={filter}
-              onClick={() => setActiveFilter(filter)}
-              sx={{
-                backgroundColor: activeFilter === filter ? PURPLE : WHITE,
-                color: activeFilter === filter ? WHITE : PURPLE,
-                fontWeight: 600,
-                fontSize: 15,
-                px: 2.5,
-                height: 36,
-                boxShadow: activeFilter === filter ? `0 2px 8px 0 ${PURPLE}1A` : 'none',
-                '&:hover': {
-                  backgroundColor: activeFilter === filter ? PURPLE_DARK : GRAY_LIGHT,
-                },
-              }}
-            />
-          ))}
-        </Box>
-        <CollectedGamesGrid
-          collectedGames={collectedGames}
-          activeFilter={activeFilter}
-          handleGameClick={handleGameClick}
-          handleRemoveGame={handleRemoveGame}
-          loading={loading}
-        />
-      </Box>
-    </Container>
+    <div className={styles.container}>
+      <h2 className={styles.title}>Saved games</h2>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '24px', marginLeft: '4px', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)' }}>
+        {(["Last added", "Newest", "Oldest"] as const).map((filter) => (
+          <Chip
+            key={filter}
+            label={filter}
+            onClick={() => setActiveFilter(filter)}
+            sx={{
+              backgroundColor: activeFilter === filter ? PURPLE : WHITE,
+              color: activeFilter === filter ? WHITE : PURPLE,
+              fontWeight: 600,
+              fontSize: 15,
+              px: 2.5,
+              height: 36,
+              boxShadow: activeFilter === filter ? `0 2px 8px 0 ${PURPLE}1A` : 'none',
+              '&:hover': {
+                backgroundColor: activeFilter === filter ? PURPLE_DARK : GRAY_LIGHT,
+              },
+            }}
+          />
+        ))}
+      </div>
+      <CollectedGamesGrid
+        collectedGames={collectedGames}
+        activeFilter={activeFilter}
+        handleGameClick={handleGameClick}
+        handleRemoveGame={handleRemoveGame}
+        loading={loading}
+      />
+    </div>
   );
 }

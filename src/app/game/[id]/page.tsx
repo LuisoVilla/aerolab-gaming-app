@@ -6,8 +6,8 @@ import {
   Container, 
   Button,
   Card,
-  CircularProgress,
-  Chip
+  Chip,
+  Skeleton
 } from "@mui/material";
 import Image from "next/image";
 import { Star, Calendar, Puzzle } from "lucide-react";
@@ -120,13 +120,60 @@ export default function GameDetail() {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <CircularProgress sx={{ color: '#6727A6' }} size={60} />
+      <Box sx={{ minHeight: '100vh' }}>
+        <Container maxWidth="md" sx={{ py: 4, position: 'relative', zIndex: 1, mx: 'auto', maxWidth: 800 }}>
+          {/* Portada y datos principales */}
+          <Box sx={{ display: 'flex', gap: 4, flexWrap: { xs: 'wrap', md: 'nowrap' }, alignItems: 'center', mb: 4, mx: 'auto', maxWidth: 800 }}>
+            {/* Imagen */}
+            <Card sx={{ width: { xs: 120, sm: 170 }, height: { xs: 160, sm: 228 }, borderRadius: 3, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, backgroundColor: '#E0E0E0', mr: { xs: 2, sm: 4 } }}>
+              <Skeleton variant="rectangular" width="100%" height="100%" />
+            </Card>
+            {/* Título y developer */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0, width: '100%' }}>
+              <Skeleton variant="text" width={220} height={40} sx={{ mb: 1 }} />
+              <Skeleton variant="text" width={180} height={32} sx={{ mb: 2 }} />
+              <Skeleton variant="rectangular" width={240} height={48} sx={{ borderRadius: '25px', mb: 2 }} />
+            </Box>
+          </Box>
+          {/* Chips */}
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: 2, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
+            <Skeleton variant="rectangular" width={120} height={48} sx={{ borderRadius: '32px' }} />
+            <Skeleton variant="rectangular" width={180} height={48} sx={{ borderRadius: '32px' }} />
+            <Skeleton variant="rectangular" width={140} height={48} sx={{ borderRadius: '32px' }} />
+          </Box>
+          {/* Summary */}
+          <Box>
+            <Skeleton variant="text" width={120} height={32} sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" width="100%" height={60} />
+          </Box>
+          {/* Platforms */}
+          <Box>
+            <Skeleton variant="text" width={100} height={28} sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" width={180} height={28} />
+          </Box>
+          {/* Screenshots */}
+          <Box sx={{ mb: 4 }}>
+            <Skeleton variant="text" width={120} height={28} sx={{ mb: 2 }} />
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              {[...Array(5)].map((_, idx) => (
+                <Card key={idx} sx={{ width: 120, height: 80, borderRadius: 2, overflow: 'hidden', backgroundColor: '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <Skeleton variant="rectangular" width="100%" height="100%" />
+                </Card>
+              ))}
+            </Box>
+          </Box>
+          {/* Similar Games */}
+          <Box sx={{ mt: 6, mx: 'auto', maxWidth: 800 }}>
+            <Skeleton variant="text" width={180} height={32} sx={{ mb: 3 }} />
+            <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+              {[...Array(4)].map((_, idx) => (
+                <Card key={idx} sx={{ width: 140, height: 180, borderRadius: 3, cursor: 'pointer', overflow: 'hidden', backgroundColor: '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Skeleton variant="rectangular" width="100%" height="100%" />
+                </Card>
+              ))}
+            </Box>
+          </Box>
+        </Container>
       </Box>
     );
   }

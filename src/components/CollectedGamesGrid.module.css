@@ -1,0 +1,51 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+}
+.card {
+  width: 114px;
+  height: 152px;
+  border-radius: 12px;
+  position: relative;
+  margin: 4px auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+}
+.cardImage {
+  width: 100%;
+  height: 100px;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 900px) {
+  .card {
+    width: 220px;
+    height: 270px;
+    min-height: 270px;
+    max-width: 220px;
+  }
+  .cardImage {
+    height: 270px;
+    min-height: 270px;
+    max-height: 270px;
+  }
+}

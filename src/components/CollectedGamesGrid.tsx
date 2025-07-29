@@ -1,6 +1,4 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import IconButton from "@mui/material/IconButton";
@@ -9,12 +7,11 @@ import Skeleton from "@mui/material/Skeleton";
 import {
   BLACK,
   BLACK_TRANSPARENT,
-  GRAY,
-  GRAY_DARK,
   WHITE,
   WHITE_TRANSPARENT
 } from "../lib/constants/colors";
 import { CollectedGame } from "../store/gameStore";
+import styles from "./CollectedGamesGrid.module.css";
 
 interface CollectedGamesGridProps {
   collectedGames: CollectedGame[];
@@ -26,47 +23,63 @@ interface CollectedGamesGridProps {
 
 export default function CollectedGamesGrid({ collectedGames, activeFilter, handleGameClick, handleRemoveGame, loading = false }: CollectedGamesGridProps) {
   const skeletonCount = 8;
-  if (loading || collectedGames.length === 0) {
+  if (loading) {
     return (
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' }, gap: { xs: 0.5, md: 4 }, alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.grid}>
         {Array.from({ length: skeletonCount }).map((_, idx) => (
-          <Box key={idx} sx={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', p: 0, m: 0, overflow: 'hidden' }}>
-            <Card sx={{ width: { xs: 114, md: 220 }, height: { xs: 152, md: 270 }, borderRadius: 3, position: 'relative', mx: 'auto', margin: '4px', maxWidth: { xs: 114, md: 220 }, minHeight: { xs: 152, md: 270 }, boxSizing: 'border-box', overflow: 'hidden' }}>
-              <Skeleton variant="rectangular" width="100%" height={100} />
-              <Skeleton variant="text" sx={{ mt: 1 }} width="80%" />
-              <Skeleton variant="circular" width={32} height={32} sx={{ position: 'absolute', top: 4, right: 4 }} />
-            </Card>
-          </Box>
+          <div key={idx} style={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', padding: 0, margin: 0, overflow: 'hidden' }}>
+            <div className={styles.card} style={{ width: '220px', height: '300px', minHeight: '300px', maxWidth: '220px', borderRadius: '12px', position: 'relative', overflow: 'hidden' }}>
+              <Skeleton variant="rectangular" width="100%" height={220} style={{ borderRadius: '12px 12px 0 0' }} />
+              <Skeleton variant="text" style={{ marginTop: 8 }} width="80%" />
+              <Skeleton variant="circular" width={32} height={32} style={{ position: 'absolute', top: 4, right: 4 }} />
+            </div>
+          </div>
         ))}
-      </Box>
+      </div>
+    );
+  }
+  if (collectedGames.length === 0) {
+    return (
+      <div style={{ width: '100%', textAlign: 'center', marginTop: 32 }}>
+        <h2 style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Nothing collected yet</h2>
+        <div style={{ color: '#888', fontSize: 16 }}>Here you will see your collected games</div>
+      </div>
     );
   }
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' }, gap: { xs: 0.5, md: 4 }, alignItems: 'center', justifyContent: 'center' }}>
+    <div className={styles.grid}>
       {collectedGames.map((game: CollectedGame) => (
-        <Box key={game?.id} sx={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', p: 0, m: 0, overflow: 'hidden' }}>
-          <Card sx={{ width: { xs: 114, md: 220 }, height: { xs: 152, md: 270 }, borderRadius: 3, position: 'relative', cursor: 'pointer', mx: 'auto', margin: '4px', maxWidth: { xs: 114, md: 220 }, minHeight: { xs: 152, md: 270 }, boxSizing: 'border-box', overflow: 'hidden', '&:hover': { transform: 'translateY(-4px)', transition: 'transform 0.3s ease' } }} onClick={() => handleGameClick(game.id)}>
-            <Box sx={{ width: '100%', height: { xs: 100, md: 270 }, minHeight: { xs: 161, md: 270 }, maxHeight: { xs: 100, md: 270 }, backgroundColor: GRAY, display: 'flex', alignItems: 'center', justifyContent: 'center', color: GRAY_DARK, fontSize: '14px', overflow: 'hidden', position: 'relative' }}>
+        <div key={game?.id} style={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', padding: 0, margin: 0, overflow: 'hidden' }}>
+          <div className={styles.card} onClick={() => handleGameClick(game.id)} style={{ cursor: 'pointer', position: 'relative', width: '220px', height: '300px', minHeight: '300px', maxWidth: '220px' }}>
+            <div className={styles.cardImage} style={{ width: '220px', height: '220px', position: 'relative' }}>
               {game.cover?.url ? (
                 <Image src={`https:${game.cover.url.replace('t_thumb', 't_cover_big')}`} alt={game.name} fill style={{ objectFit: 'cover' }} sizes="(max-width: 600px) 114px, 220px" priority={true} />
               ) : (
                 'Game Image'
               )}
-            </Box>
-            <Typography sx={{ color: BLACK, fontSize: '14px', textAlign: 'center', fontWeight: 600, mt: 1 }}>
+            </div>
+            {/* Solo mostrar el nombre en desktop */}
+            <Typography style={{ color: BLACK, fontSize: 14, textAlign: 'center', fontWeight: 600, marginTop: 8, display: 'none' }} className="game-title-desktop">
               {game.name}
             </Typography>
+            <style>{`
+              @media (min-width: 600px) {
+                .game-title-desktop {
+                  display: block !important;
+                }
+              }
+            `}</style>
             {(activeFilter === "Newest" || activeFilter === "Oldest") && game.first_release_date && (
-              <Box sx={{ position: 'absolute', bottom: 40, left: 4, backgroundColor: BLACK_TRANSPARENT, color: WHITE, padding: '2px 6px', borderRadius: 1, fontSize: '12px', fontWeight: 'bold' }}>
+              <div style={{ position: 'absolute', bottom: 40, left: 4, background: BLACK_TRANSPARENT, color: WHITE, padding: '2px 6px', borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>
                 {new Date(game.first_release_date * 1000).getFullYear()}
-              </Box>
+              </div>
             )}
-            <IconButton aria-label="delete" sx={{ position: 'absolute', top: 4, right: 4, backgroundColor: WHITE_TRANSPARENT, '&:hover': { backgroundColor: WHITE } }} onClick={(e) => { e.stopPropagation(); handleRemoveGame(game.id, game.name); }}>
-              <DeleteOutline sx={{ fontSize: 20 }} />
+            <IconButton aria-label="delete" style={{ position: 'absolute', top: 4, right: 4, background: WHITE_TRANSPARENT }} onClick={(e) => { e.stopPropagation(); handleRemoveGame(game.id, game.name); }}>
+              <DeleteOutline style={{ fontSize: 20 }} />
             </IconButton>
-          </Card>
-        </Box>
+          </div>
+        </div>
       ))}
-    </Box>
+    </div>
   );
 }

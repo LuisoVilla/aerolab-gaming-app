@@ -1,0 +1,48 @@
+.header {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.headerBar {
+  padding: 16px;
+  position: relative;
+  z-index: 1000;
+}
+.backButton {
+  color: #6727A6;
+  margin-bottom: 16px;
+}
+.backButton:hover {
+  background-color: rgba(103, 39, 166, 0.1);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #FF00AE;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  margin-right: 8px;
+}
+.logo:hover {
+  box-shadow: 0 0 0 2px #FF00AE33;
+}
+.headerTitle {
+  font-weight: bold;
+  color: #6727A6;
+  letter-spacing: 0.5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+@media (min-width: 600px) {
+  .headerTitle {
+    justify-content: center;
+    text-align: center;
+  }
+}

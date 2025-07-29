@@ -19,7 +19,7 @@ const mockGames = [
 ];
 
 describe('HomeClient', () => {
-  const mockedUseGameStore = useGameStore as jest.Mock;
+  const mockedUseGameStore = useGameStore as unknown as jest.Mock;
 
   beforeEach(() => {
     mockedUseGameStore.mockImplementation(() => ({

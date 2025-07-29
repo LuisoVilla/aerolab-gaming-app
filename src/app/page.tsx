@@ -4,39 +4,27 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Chip from "@mui/material/Chip";
-import Card from "@mui/material/Card";
-import Image from "next/image";
-import IconButton from "@mui/material/IconButton";
+import CollectedGamesGrid from "../components/CollectedGamesGrid";
 import {
   PURPLE,
   PURPLE_DARK,
   WHITE,
-  WHITE_TRANSPARENT,
-  BLACK,
-  BLACK_TRANSPARENT,
-  GRAY,
-  GRAY_DARK,
   GRAY_LIGHT
 } from "../lib/constants/colors";
 import { useState, useEffect } from "react";
-import { DeleteOutline } from "@mui/icons-material";
-import { useGameStore, type CollectedGame } from "../store/gameStore";
+import { useGameStore } from "../store/gameStore";
 import { useRouter } from "next/navigation";
 import { useToastContext } from "../context/ToastContext";
 
-export default function Home() {
+export default function Page() {
   const [activeFilter, setActiveFilter] = useState<"Last added" | "Newest" | "Oldest">("Last added");
+  const [loading, setLoading] = useState(true);
   const { getGamesByFilter, removeGame } = useGameStore();
   // Limpiar el store de juegos al cargar la página para evitar datos cacheados
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Solo limpiar una vez por sesión para evitar bucle
-      if (!sessionStorage.getItem('game-store-cleared')) {
-        localStorage.removeItem('game-storage');
-        sessionStorage.setItem('game-store-cleared', 'true');
-        window.location.reload();
-      }
-    }
+    // Simula carga de datos
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
   }, []);
   const { showGameRemoved } = useToastContext();
   const router = useRouter();
@@ -63,174 +51,52 @@ export default function Home() {
 
   return (
     <Container maxWidth="lg" sx={{ pt: 6, position: 'relative', justifyContent: 'center' }}>
-      {/* Games Section */}
       <Box sx={{ mb: 4 }}>
         <Typography 
           variant="h5" 
-          sx={{ 
-            fontWeight: 'bold', 
-            color: PURPLE,
-            textAlign: 'center',
-            mb: 2
-          }}
+          sx={{ fontWeight: 'bold', color: PURPLE, textAlign: 'center', mb: 2 }}
         >
           Saved games
         </Typography>
-        {/* Filter Chips */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4, ml: 0.5 }}>
-          {(["Last added", "Newest", "Oldest"] as const).map((filter) => {
-            const filterLabels = {
-              "Last added": "Last added",
-              "Newest": "Newest",
-              "Oldest": "Oldest"
-            };
-            return (
-              <Chip
-                key={filter}
-                label={filterLabels[filter]}
-                onClick={() => setActiveFilter(filter)}
-                sx={{
-                  backgroundColor: activeFilter === filter ? PURPLE : WHITE,
-                  color: activeFilter === filter ? WHITE : PURPLE,
-                  fontWeight: 600,
-                  fontSize: 15,
-                  px: 2.5,
-                  height: 36,
-                  boxShadow: activeFilter === filter ? `0 2px 8px 0 ${PURPLE}1A` : 'none',
-                  '&:hover': {
-                    backgroundColor: activeFilter === filter ? PURPLE_DARK : GRAY_LIGHT,
-                  },
-                }}
-              />
-            );
-          })}
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 2,
+          mb: 4,
+          ml: 0.5,
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          // backgroundColor: WHITE,
+          boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
+        }}>
+          {(["Last added", "Newest", "Oldest"] as const).map((filter) => (
+            <Chip
+              key={filter}
+              label={filter}
+              onClick={() => setActiveFilter(filter)}
+              sx={{
+                backgroundColor: activeFilter === filter ? PURPLE : WHITE,
+                color: activeFilter === filter ? WHITE : PURPLE,
+                fontWeight: 600,
+                fontSize: 15,
+                px: 2.5,
+                height: 36,
+                boxShadow: activeFilter === filter ? `0 2px 8px 0 ${PURPLE}1A` : 'none',
+                '&:hover': {
+                  backgroundColor: activeFilter === filter ? PURPLE_DARK : GRAY_LIGHT,
+                },
+              }}
+            />
+          ))}
         </Box>
-
-        {/* Show collected games or empty state */}
-        {collectedGames.length > 0 ? (
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: 'repeat(3, 1fr)',
-                md: 'repeat(4, 1fr)'
-              },
-              gap: { xs: 0.5, md: 4 },
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {collectedGames.map((game: CollectedGame) => (
-              <Box 
-                key={game?.id}
-                sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  minWidth: 0, 
-                  width: '100%',
-                  p: 0,
-                  m: 0,
-                  overflow: 'hidden',
-                }}
-              >
-                <Card 
-                  sx={{ 
-                    width: { xs: 114, md: 220 },
-                    height: { xs: 152, md: 270 },
-                    borderRadius: 3,
-                    position: 'relative',
-                    cursor: 'pointer',
-                    mx: 'auto',
-                    margin: '4px',
-                    maxWidth: { xs: 114, md: 220 },
-                    minHeight: { xs: 152, md: 270 },
-                    boxSizing: 'border-box',
-                    overflow: 'hidden',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      transition: 'transform 0.3s ease',
-                    }
-                  }}
-                  onClick={() => handleGameClick(game.id)}
-                >
-                  <Box
-                    sx={{
-                      width: '100%',
-                      height: { xs: 100, md: 270 },
-                      minHeight: { xs: 161, md: 270 },
-                      maxHeight: { xs: 100, md: 270 },
-                      backgroundColor: GRAY,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: GRAY_DARK,
-                      fontSize: '14px',
-                      overflow: 'hidden',
-                      position: 'relative',
-                    }}
-                  >
-                    {game.cover?.url ? (
-                      <Image
-                        src={`https:${game.cover.url.replace('t_thumb', 't_cover_big')}`}
-                        alt={game.name}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 600px) 114px, 220px"
-                        priority={true}
-                      />
-                    ) : (
-                      'Game Image'
-                    )}
-                  </Box>
-                  {/* Show release year for newest/oldest filters */}
-                  {(activeFilter === "Newest" || activeFilter === "Oldest") && game.first_release_date && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        bottom: 40,
-                        left: 4,
-                        backgroundColor: BLACK_TRANSPARENT,
-                        color: WHITE,
-                        padding: '2px 6px',
-                        borderRadius: 1,
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {new Date(game.first_release_date * 1000).getFullYear()}
-                    </Box>
-                  )}
-                  <IconButton
-                    sx={{
-                      position: 'absolute',
-                      top: 4,
-                      right: 4,
-                      backgroundColor: WHITE_TRANSPARENT,
-                      '&:hover': {
-                        backgroundColor: WHITE,
-                      }
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveGame(game.id, game.name);
-                    }}
-                  >
-                    <DeleteOutline sx={{ fontSize: 20 }} />
-                  </IconButton>
-                </Card>
-              </Box>
-            ))}
-          </Box>
-        ) : (
-          <Box sx={{ textAlign: 'center', p: 8 }}>
-            <Typography sx={{ color: BLACK, fontSize: '18px', mb: 2, fontWeight: 'bold' }}>
-              Nothing collected yet
-            </Typography>
-            <Typography sx={{ color: BLACK, fontSize: '14px' }}>
-              Here you will see your collected games
-            </Typography>
-          </Box>
-        )}
+        <CollectedGamesGrid
+          collectedGames={collectedGames}
+          activeFilter={activeFilter}
+          handleGameClick={handleGameClick}
+          handleRemoveGame={handleRemoveGame}
+          loading={loading}
+        />
       </Box>
     </Container>
   );

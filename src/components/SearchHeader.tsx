@@ -1,15 +1,12 @@
 "use client";
 
-import { 
-  Box, 
-  IconButton, 
-  Typography 
-} from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { useRouter, usePathname } from "next/navigation";
 import SearchCombobox from "./SearchCombobox";
 import { Swords } from "lucide-react";
-import { PURPLE_DARK, BLACK } from "@/lib/constants/colors";
+import { BLACK } from "@/lib/constants/colors";
+import styles from "./SearchHeader.module.css";
+import { Typography } from "@mui/material";
 
 interface SearchHeaderProps {
   children: React.ReactNode;
@@ -22,61 +19,35 @@ export default function SearchHeader({ children }: SearchHeaderProps) {
   const isGameDetail = pathname?.startsWith('/game/');
 
   return (
-    <Box sx={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-      <Box sx={{ p: 2, position: 'relative', zIndex: 1000 }}>
+    <div className={styles.header}>
+      <div className={styles.headerBar}>
         {/* Back button */}
         {!isHomePage && (
-          <IconButton 
-            onClick={() => router.back()}
-            sx={{ 
-              color: '#6727A6',
-              mb: { xs: 2, sm: 0 },
-              '&:hover': {
-                backgroundColor: 'rgba(103, 39, 166, 0.1)'
-              }
-            }}
-          >
+          <button className={styles.backButton} onClick={() => router.back()}>
             <ArrowBack />
-            <Typography variant="body2" sx={{ ml: 1 }}>
-              Back
-            </Typography>
-          </IconButton>
+            <span style={{ marginLeft: 8 }}>Back</span>
+          </button>
         )}
 
         {/* Header content */}
         {!isGameDetail ? (
-          <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 400 }, mx: { xs: 0, sm: 'auto' }, mb: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 48,
-                  height: 48,
-                  border: '2px solid #FF00AE',
-                  borderRadius: 2,
-                  backgroundColor: 'transparent',
-                  cursor: 'pointer',
-                  transition: 'box-shadow 0.2s',
-                  mr: 0.5,
-                  '&:hover': {
-                    boxShadow: '0 0 0 2px #FF00AE33',
-                  },
-                }}
+          <div style={{ width: '100%', maxWidth: 400, margin: '0 auto 24px auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <div
+                className={styles.logo}
                 onClick={() => router.push('/')}
                 role="button"
                 tabIndex={0}
                 aria-label="Go to home"
               >
                 <Swords size={28} color={BLACK} />
-              </Box>
+              </div>
               <Typography 
-                variant="h5" 
+                variant="h5"
                 component="h1"
-                sx={{ 
+                sx={{
                   fontWeight: 'bold',
-                  color: PURPLE_DARK,
+                  color: '#6727A6',
                   letterSpacing: 0.5,
                   textAlign: { xs: 'left', sm: 'center' },
                   width: '100%',
@@ -87,43 +58,29 @@ export default function SearchHeader({ children }: SearchHeaderProps) {
               >
                 Gaming Haven Z
               </Typography>
-            </Box>
+            </div>
             <SearchCombobox placeholder="Search games..." />
-          </Box>
+          </div>
         ) : (
-          <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 480 }, mx: { xs: 0, sm: 'auto' }, mt: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 48,
-                height: 48,
-                border: '2px solid #FF00AE',
-                borderRadius: 2,
-                backgroundColor: 'transparent',
-                cursor: 'pointer',
-                transition: 'box-shadow 0.2s',
-                mb: 1,
-                '&:hover': {
-                  boxShadow: '0 0 0 2px #FF00AE33',
-                },
-              }}
+          <div style={{ width: '100%', maxWidth: 480, margin: '0 auto', marginTop: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+            <div
+              className={styles.logo}
               onClick={() => router.push('/')}
               role="button"
               tabIndex={0}
               aria-label="Go to home"
+              style={{ marginBottom: 8 }}
             >
               <Swords size={28} color={BLACK} />
-            </Box>
+            </div>
             <SearchCombobox placeholder="Search games..." />
-          </Box>
+          </div>
         )}
-      </Box>
+      </div>
       {/* Content */}
-      <Box sx={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 1 }}>
         {children}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

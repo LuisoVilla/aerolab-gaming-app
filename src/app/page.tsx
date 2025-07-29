@@ -18,7 +18,7 @@ import {
   GRAY_DARK,
   GRAY_LIGHT
 } from "../lib/constants/colors";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DeleteOutline } from "@mui/icons-material";
 import { useGameStore, type CollectedGame } from "../store/gameStore";
 import { useRouter } from "next/navigation";
@@ -27,6 +27,17 @@ import { useToastContext } from "../context/ToastContext";
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState<"Last added" | "Newest" | "Oldest">("Last added");
   const { getGamesByFilter, removeGame } = useGameStore();
+  // Limpiar el store de juegos al cargar la página para evitar datos cacheados
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Solo limpiar una vez por sesión para evitar bucle
+      if (!sessionStorage.getItem('game-store-cleared')) {
+        localStorage.removeItem('game-storage');
+        sessionStorage.setItem('game-store-cleared', 'true');
+        window.location.reload();
+      }
+    }
+  }, []);
   const { showGameRemoved } = useToastContext();
   const router = useRouter();
 

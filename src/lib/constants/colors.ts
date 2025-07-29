@@ -1,3 +1,8 @@
+export const PURPLE_HOVER = '#2A0F47';
+export const PURPLE_BORDER = '#E2D9F3';
+export const GRAY_BG = '#E0E0E0';
+export const GRAY_TEXT = '#999';
+export const GRAY_SUBTITLE = '#555';
 // Centralized color palette for the app
 export const PURPLE = "#6727A6";
 export const PURPLE_DARK = "#5A1F8B";

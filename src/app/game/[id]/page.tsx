@@ -6,14 +6,17 @@ import {
   Container, 
   Button,
   Card,
-  CardMedia,
-  CircularProgress
+  CircularProgress,
+  Chip
 } from "@mui/material";
-import { Star, CalendarMonth, VideogameAsset } from "@mui/icons-material";
+import Image from "next/image";
+import { Star, Calendar, Puzzle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useGameStore } from "../../../store/gameStore";
 import { useToastContext } from "../../../context/ToastContext";
+import { BLACK, PURPLE_DARK } from "@/lib/constants/colors";
+import { formatDateMMDDYYYY } from "@/lib/utils/date";
 
 interface Game {
   id: number;
@@ -48,16 +51,7 @@ interface Game {
   }>;
 }
 
-// Helper function to format date
-function formatDate(timestamp: number): string {
-  if (!timestamp) return "Unknown";
-  const date = new Date(timestamp * 1000);
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
-  });
-}
+
 
 export default function GameDetail() {
   const params = useParams();
@@ -164,8 +158,7 @@ export default function GameDetail() {
   const title = game.name || "Unknown Game";
   const developer = game.involved_companies?.[0]?.company?.name || "Unknown Developer";
   const rating = game.rating ? Math.round(game.rating) : null;
-  const releaseDate = formatDate(game.first_release_date || 0);
-  const genres = game.genres?.map((g) => g.name).join(", ") || "Unknown Genre";
+  const releaseDate = formatDateMMDDYYYY(game.first_release_date || 0);
   const platforms = game.platforms?.map((p) => p.name).join(", ") || "Unknown Platforms";
   const summary = game.summary || "No summary available.";
   const coverUrl = game.cover?.url ? `https:${game.cover.url.replace('t_thumb', 't_cover_big_2x')}` : null;
@@ -173,54 +166,90 @@ export default function GameDetail() {
   const similarGames = game.similar_games?.slice(0, 4) || [];
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <Container maxWidth="lg" sx={{ py: 4, position: 'relative', zIndex: 1 }}>
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          {/* Game Cover and Main Info */}
-          <Box sx={{ minWidth: 300, flex: '0 0 auto' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Card sx={{ width: 250, mb: 3, borderRadius: 3 }}>
-                <CardMedia
-                  component="div"
-                  sx={{
-                    height: 350,
-                    backgroundColor: '#E0E0E0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#999',
-                    fontSize: '14px',
-                    backgroundImage: coverUrl ? `url(${coverUrl})` : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}
-                >
-                  {!coverUrl && 'Game Cover'}
-                </CardMedia>
+    <Box sx={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+      <Container maxWidth="md" sx={{ py: 4, position: 'relative', zIndex: 1, mx: 'auto', maxWidth: 800 }}>
+        {/* Portada y datos principales alineados horizontalmente y centrados */}
+        <Box sx={{ display: 'flex', gap: 4, flexWrap: { xs: 'wrap', md: 'nowrap' }, alignItems: 'center', mb: 4, mx: 'auto', maxWidth: 800 }}>
+          {/* Mobile: imagen a la izquierda, título y developer a la derecha; Desktop: igual que antes */}
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'flex-start' }, width: '100%' }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'row', sm: 'row' }, width: '100%' }}>
+              {/* Imagen */}
+              <Card sx={{ width: { xs: 120, sm: 170 }, height: { xs: 160, sm: 228 }, borderRadius: 3, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, backgroundColor: '#E0E0E0', mr: { xs: 2, sm: 4 } }}>
+                {coverUrl ? (
+                  <Image
+                    src={coverUrl}
+                    alt={title + ' cover'}
+                    width={170}
+                    height={228}
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    priority
+                  />
+                ) : (
+                  <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999', fontSize: '14px' }}>
+                    Game Cover
+                  </Box>
+                )}
               </Card>
-              
+              {/* Título y developer */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0, width: '100%' }}>
+                <Typography variant="h4" sx={{ fontWeight: 'bold', color: PURPLE_DARK, mb: 1, wordBreak: 'break-word', fontSize: { xs: '1.125rem', sm: '2rem' }, textAlign: { xs: 'left', sm: 'left' }, width: '100%' }}>
+                  {title}
+                </Typography>
+                <Typography variant="h6" sx={{ color: BLACK, mb: 2, wordBreak: 'break-word', textAlign: { xs: 'left', sm: 'left' }, width: '100%' }}>
+                  {developer}
+                </Typography>
+                {/* Botón solo en desktop debajo del developer */}
+                <Box sx={{ display: { xs: 'none', sm: 'block' }, width: 240, mt: 0 }}>
+                  <Button 
+                    variant="contained"
+                    onClick={handleCollectGame}
+                    disabled={isCollected}
+                    sx={{ 
+                      backgroundColor: isCollected ? '#FFFFFF' : PURPLE_DARK,
+                      color: isCollected ? PURPLE_DARK : '#FFFFFF',
+                      border: isCollected ? `2px solid ${PURPLE_DARK}` : 'none',
+                      borderRadius: '25px',
+                      px: 4,
+                      py: 1.5,
+                      width: '100%',
+                      mb: 2,
+                      '&:hover': {
+                        backgroundColor: isCollected ? '#FFFFFF' : '#2A0F47'
+                      },
+                      '&.Mui-disabled': {
+                        backgroundColor: '#FFFFFF',
+                        color: PURPLE_DARK,
+                        border: `2px solid ${PURPLE_DARK}`
+                      }
+                    }}
+                  >
+                    {isCollected ? 'Game Collected' : 'Collect game'}
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+            {/* Botón solo en mobile debajo de la imagen, ocupando todo el ancho */}
+            <Box sx={{ display: { xs: 'block', sm: 'none' }, width: '100%', mt: 2 }}>
               <Button 
                 variant="contained"
                 onClick={handleCollectGame}
                 disabled={isCollected}
                 sx={{ 
-                  backgroundColor: isCollected ? '#FFFFFF' : '#3C1661',
-                  color: isCollected ? '#3C1661' : '#FFFFFF',
-                  border: isCollected ? '2px solid #3C1661' : 'none',
+                  backgroundColor: isCollected ? '#FFFFFF' : PURPLE_DARK,
+                  color: isCollected ? PURPLE_DARK : '#FFFFFF',
+                  border: isCollected ? `2px solid ${PURPLE_DARK}` : 'none',
                   borderRadius: '25px',
                   px: 4,
                   py: 1.5,
+                  width: '100%',
+                  mb: 2,
                   '&:hover': {
                     backgroundColor: isCollected ? '#FFFFFF' : '#2A0F47'
                   },
                   '&.Mui-disabled': {
                     backgroundColor: '#FFFFFF',
-                    color: '#3C1661',
-                    border: '2px solid #3C1661'
+                    color: PURPLE_DARK,
+                    border: `2px solid ${PURPLE_DARK}`
                   }
                 }}
               >
@@ -228,107 +257,149 @@ export default function GameDetail() {
               </Button>
             </Box>
           </Box>
+        </Box>
 
-          {/* Game Details */}
-          <Box sx={{ flex: 1, minWidth: 400 }}>
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 1 }}>
-                {title}
-              </Typography>
-              <Typography variant="h6" sx={{ color: '#666', mb: 2 }}>
-                {developer}
-              </Typography>
-
-              {/* Rating and Info */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                {rating && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Star sx={{ color: '#3C1661' }} />
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      Rating: {rating}/100
-                    </Typography>
-                  </Box>
-                )}
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CalendarMonth sx={{ color: '#3C1661' }} />
-                  <Typography variant="body1">
-                    Release: {releaseDate}
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <VideogameAsset sx={{ color: '#3C1661' }} />
-                  <Typography variant="body1">
-                    Genre: {genres}
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Summary */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
-                  Summary
-                </Typography>
-                <Typography variant="body1" sx={{ lineHeight: 1.8, color: '#555' }}>
-                  {summary}
-                </Typography>
-              </Box>
-
-              {/* Platforms */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
-                  Platforms
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#555' }}>
-                  {platforms}
-                </Typography>
-              </Box>
-
-              {/* Media */}
-              {screenshots.length > 0 && (
-                <Box sx={{ mb: 4 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
-                    Screenshots
-                  </Typography>
-                  
-                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                    {screenshots.map((screenshot: { url: string }, index: number) => (
-                      <Card key={index} sx={{ width: 120, borderRadius: 2 }}>
-                        <CardMedia
-                          component="div"
-                          sx={{
-                            height: 80,
-                            backgroundColor: '#E0E0E0',
-                            backgroundImage: screenshot.url ? `url(https:${screenshot.url.replace('t_thumb', 't_screenshot_med')})` : 'none',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                          }}
-                        />
-                      </Card>
-                    ))}
-                  </Box>
-                </Box>
-              )}
-            </Box>
+        {/* Bloque vertical: chips, summary, platforms, screenshots */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 800, mx: 'auto' }}>
+          {/* Chips en columna */}
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: 2, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
+            {typeof game.rating !== 'undefined' && (
+              <Chip
+                icon={<Star color={PURPLE_DARK} size={22} style={{ marginLeft: 3 }} />}
+                label={
+                  <span style={{ fontWeight: 400, fontSize: 18 }}>
+                    <span style={{ color: PURPLE_DARK, fontWeight: 700 }}>Rating:</span>
+                    <span style={{ color: BLACK, marginLeft: 6 }}>{rating !== null ? rating : 'N/A'}</span>
+                  </span>
+                }
+                sx={{
+                  border: '2px solid #E2D9F3',
+                  background: '#FFF',
+                  px: 0.7,
+                  py: 1,
+                  borderRadius: '32px',
+                  boxShadow: 'none',
+                  minHeight: 48,
+                  minWidth: 120,
+                  maxWidth: 220,
+                  fontSize: 18,
+                }}
+              />
+            )}
+            {game.first_release_date && (
+              <Chip
+                icon={<Calendar color={PURPLE_DARK} size={22} style={{ marginLeft: 3 }} />}
+                label={
+                  <span style={{ fontWeight: 400, fontSize: 18 }}>
+                    <span style={{ color: PURPLE_DARK, fontWeight: 700 }}>Release:</span>
+                    <span style={{ color: BLACK, marginLeft: 6 }}>{releaseDate}</span>
+                  </span>
+                }
+                sx={{
+                  border: '2px solid #E2D9F3',
+                  background: '#FFF',
+                  px: 0.7,
+                  py: 1,
+                  borderRadius: '32px',
+                  boxShadow: 'none',
+                  minHeight: 48,
+                  minWidth: 180,
+                  maxWidth: 340,
+                  fontSize: 18,
+                  whiteSpace: 'nowrap',
+                  overflow: 'visible',
+                  textOverflow: 'clip',
+                }}
+              />
+            )}
+            {game.genres && game.genres.length > 0 && (
+              <Chip
+                icon={<Puzzle color={PURPLE_DARK} size={22} style={{ marginLeft: 3 }} />}
+                label={
+                  <span style={{ fontWeight: 400, fontSize: 18 }}>
+                    <span style={{ color: PURPLE_DARK, fontWeight: 700 }}>Genre:</span>
+                    <span style={{ color: BLACK, marginLeft: 6 }}>{game.genres[0].name}</span>
+                  </span>
+                }
+                sx={{
+                  border: '2px solid #E2D9F3',
+                  background: '#FFF',
+                  px: 0.7,
+                  py: 1,
+                  borderRadius: '32px',
+                  boxShadow: 'none',
+                  minHeight: 48,
+                  minWidth: 140,
+                  maxWidth: 260,
+                  fontSize: 18,
+                }}
+              />
+            )}
           </Box>
+          {/* Summary */}
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
+              Summary
+            </Typography>
+            <Typography variant="body1" sx={{ lineHeight: 1.8, color: '#555' }}>
+              {summary}
+            </Typography>
+          </Box>
+          {/* Platforms */}
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
+              Platforms
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#555' }}>
+              {platforms}
+            </Typography>
+          </Box>
+          {/* Media */}
+          {screenshots.length > 0 && (
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 2 }}>
+                Screenshots
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                {screenshots.map((screenshot: { url: string }, index: number) => (
+                  <Card key={index} sx={{ width: 120, height: 80, borderRadius: 2, overflow: 'hidden', backgroundColor: '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {screenshot.url ? (
+                      <Image
+                        src={`https:${screenshot.url.replace('t_thumb', 't_screenshot_med')}`}
+                        alt={`Screenshot ${index + 1}`}
+                        width={120}
+                        height={80}
+                        style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                        loading="lazy"
+                      />
+                    ) : null}
+                  </Card>
+                ))}
+              </Box>
+            </Box>
+          )}
         </Box>
 
         {/* Similar Games */}
         {similarGames.length > 0 && (
-          <Box sx={{ mt: 6 }}>
+          <Box sx={{ mt: 6, mx: 'auto', maxWidth: 800 }}>
             <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#3C1661', mb: 3 }}>
               Similar games
             </Typography>
-            
             <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-              {similarGames.map((gameItem: { id: number; name: string; cover?: { url: string } }) => (
+              {similarGames.map((gameItem: { id: number; name: string; cover?: { url: string } }, idx: number) => (
                 <Card 
                   key={gameItem.id}
                   sx={{ 
                     width: 140,
+                    height: 180,
                     borderRadius: 3,
                     cursor: 'pointer',
+                    overflow: 'hidden',
+                    backgroundColor: '#E0E0E0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     '&:hover': {
                       transform: 'translateY(-4px)',
                       transition: 'transform 0.3s ease',
@@ -338,23 +409,20 @@ export default function GameDetail() {
                     router.push(`/game/${gameItem.id}`);
                   }}
                 >
-                  <CardMedia
-                    component="div"
-                    sx={{
-                      height: 180,
-                      backgroundColor: '#E0E0E0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#999',
-                      fontSize: '12px',
-                      backgroundImage: gameItem.cover?.url ? `url(https:${gameItem.cover.url.replace('t_thumb', 't_cover_big')})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
-                  >
-                    {!gameItem.cover?.url && gameItem.name}
-                  </CardMedia>
+                  {gameItem.cover?.url ? (
+                    <Image
+                      src={`https:${gameItem.cover.url.replace('t_thumb', 't_cover_big')}`}
+                      alt={gameItem.name + ' cover'}
+                      width={140}
+                      height={180}
+                      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999', fontSize: '12px' }}>
+                      {gameItem.name}
+                    </Box>
+                  )}
                 </Card>
               ))}
             </Box>

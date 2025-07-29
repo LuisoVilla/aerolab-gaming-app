@@ -29,8 +29,7 @@ export default function CollectedGamesGrid({ collectedGames, activeFilter, handl
         {Array.from({ length: skeletonCount }).map((_, idx) => (
           <div key={idx} style={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', padding: 0, margin: 0, overflow: 'hidden' }}>
             <div className={styles.card} style={{ width: '220px', height: '300px', minHeight: '300px', maxWidth: '220px', borderRadius: '12px', position: 'relative', overflow: 'hidden' }}>
-              <Skeleton variant="rectangular" width="100%" height={220} style={{ borderRadius: '12px 12px 0 0' }} />
-              <Skeleton variant="text" style={{ marginTop: 8 }} width="80%" />
+              <Skeleton variant="rectangular" width="100%" height={220} style={{ borderRadius: '12px' }} />
               <Skeleton variant="circular" width={32} height={32} style={{ position: 'absolute', top: 4, right: 4 }} />
             </div>
           </div>
@@ -50,25 +49,14 @@ export default function CollectedGamesGrid({ collectedGames, activeFilter, handl
     <div className={styles.grid}>
       {collectedGames.map((game: CollectedGame) => (
         <div key={game?.id} style={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', padding: 0, margin: 0, overflow: 'hidden' }}>
-          <div className={styles.card} onClick={() => handleGameClick(game.id)} style={{ cursor: 'pointer', position: 'relative', width: '220px', height: '300px', minHeight: '300px', maxWidth: '220px' }}>
-            <div className={styles.cardImage} style={{ width: '220px', height: '220px', position: 'relative' }}>
+          <div className={styles.card} onClick={() => handleGameClick(game.id)} style={{ cursor: 'pointer', position: 'relative', width: '220px', height: '300px', minHeight: '300px', maxWidth: '220px', borderRadius: '12px' }}>
+            <div className={styles.cardImage} style={{ width: '220px', height: '220px', position: 'relative', borderRadius: '12px', overflow: 'hidden' }}>
               {game.cover?.url ? (
-                <Image src={`https:${game.cover.url.replace('t_thumb', 't_cover_big')}`} alt={game.name} fill style={{ objectFit: 'cover' }} sizes="(max-width: 600px) 114px, 220px" priority={true} />
+                <Image src={`https:${game.cover.url.replace('t_thumb', 't_cover_big')}`} alt={game.name} fill style={{ objectFit: 'cover', borderRadius: '12px' }} sizes="(max-width: 600px) 114px, 220px" priority={true} />
               ) : (
                 'Game Image'
               )}
             </div>
-            {/* Solo mostrar el nombre en desktop */}
-            <Typography style={{ color: BLACK, fontSize: 14, textAlign: 'center', fontWeight: 600, marginTop: 8, display: 'none' }} className="game-title-desktop">
-              {game.name}
-            </Typography>
-            <style>{`
-              @media (min-width: 600px) {
-                .game-title-desktop {
-                  display: block !important;
-                }
-              }
-            `}</style>
             {(activeFilter === "Newest" || activeFilter === "Oldest") && game.first_release_date && (
               <div style={{ position: 'absolute', bottom: 40, left: 4, background: BLACK_TRANSPARENT, color: WHITE, padding: '2px 6px', borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>
                 {new Date(game.first_release_date * 1000).getFullYear()}

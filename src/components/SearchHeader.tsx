@@ -128,7 +128,31 @@ export default function SearchHeader({ children }: SearchHeaderProps) {
         )}
         {/* Si estamos en el detalle del game, solo centrar la barra de búsqueda debajo del botón Back */}
         {isGameDetail && (
-          <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 480 }, mx: { xs: 0, sm: 'auto' }, mt: 0 }}>
+          <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 480 }, mx: { xs: 0, sm: 'auto' }, mt: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 48,
+                height: 48,
+                border: '2px solid #FF00AE',
+                borderRadius: 2,
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                transition: 'box-shadow 0.2s',
+                mb: 1,
+                '&:hover': {
+                  boxShadow: '0 0 0 2px #FF00AE33',
+                },
+              }}
+              onClick={() => router.push('/')}
+              role="button"
+              tabIndex={0}
+              aria-label="Go to home"
+            >
+              <Swords size={28} color={BLACK} />
+            </Box>
             <SearchCombobox placeholder="Search games..." />
           </Box>
         )}

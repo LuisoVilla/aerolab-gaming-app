@@ -29,7 +29,7 @@ export default function CollectedGamesGrid({ collectedGames, activeFilter, handl
         {Array.from({ length: skeletonCount }).map((_, idx) => (
           <div key={idx} style={{ display: 'flex', justifyContent: 'center', minWidth: 0, width: '100%', padding: 0, margin: 0, overflow: 'hidden' }}>
             <div className={styles.card} style={{ width: '220px', height: '300px', minHeight: '300px', maxWidth: '220px', borderRadius: '12px', position: 'relative', overflow: 'hidden' }}>
-              <Skeleton variant="rectangular" width="100%" height={220} style={{ borderRadius: '12px 12px 0 0' }} />
+              <Skeleton variant="rectangular" width="100%" height={220} style={{ borderRadius: '12px' }} />
               <Skeleton variant="circular" width={32} height={32} style={{ position: 'absolute', top: 4, right: 4 }} />
             </div>
           </div>

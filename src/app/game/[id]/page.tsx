@@ -17,6 +17,7 @@ import { useGameStore } from "../../../store/gameStore";
 import { useToastContext } from "../../../context/ToastContext";
 import { BLACK, PURPLE_DARK } from "@/lib/constants/colors";
 import { formatDateMMDDYYYY } from "@/lib/utils/date";
+import ScreenshotModal from '@/components/ScreenshotModal';
 
 interface Game {
   id: number;
@@ -61,6 +62,12 @@ export default function GameDetail() {
   const [error, setError] = useState<string | null>(null);
   const { addGame, isGameCollected } = useGameStore();
   const { showGameCollected } = useToastContext();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalImage, setModalImage] = useState<string | null>(null);
+  const handleScreenshotClick = (url: string) => {
+    setModalImage(url);
+    setModalOpen(true);
+  };
 
   const gameId = params.id as string;
   const isCollected = game ? isGameCollected(game.id) : false;
@@ -362,7 +369,11 @@ export default function GameDetail() {
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 {screenshots.map((screenshot: { url: string }, index: number) => (
-                  <Card key={index} sx={{ width: 120, height: 80, borderRadius: 2, overflow: 'hidden', backgroundColor: '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Card 
+                    key={index} 
+                    sx={{ width: 120, height: 80, borderRadius: 2, overflow: 'hidden', backgroundColor: '#E0E0E0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                    onClick={() => handleScreenshotClick(`https:${screenshot.url.replace('t_thumb', 't_screenshot_huge')}`)}
+                  >
                     {screenshot.url ? (
                       <Image
                         src={`https:${screenshot.url.replace('t_thumb', 't_screenshot_med')}`}
@@ -376,6 +387,13 @@ export default function GameDetail() {
                   </Card>
                 ))}
               </Box>
+              {modalOpen && modalImage && (
+                <ScreenshotModal 
+                  open={modalOpen} 
+                  onClose={() => setModalOpen(false)} 
+                  imageUrl={modalImage} 
+                />
+              )}
             </Box>
           )}
         </Box>

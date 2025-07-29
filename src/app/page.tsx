@@ -4,10 +4,20 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Chip from "@mui/material/Chip";
-import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
+import Image from "next/image";
 import IconButton from "@mui/material/IconButton";
+import {
+  PURPLE,
+  PURPLE_DARK,
+  WHITE,
+  WHITE_TRANSPARENT,
+  BLACK,
+  BLACK_TRANSPARENT,
+  GRAY,
+  GRAY_DARK,
+  GRAY_LIGHT
+} from "../lib/constants/colors";
 import { useState } from "react";
 import { DeleteOutline } from "@mui/icons-material";
 import { useGameStore, type CollectedGame } from "../store/gameStore";
@@ -48,7 +58,7 @@ export default function Home() {
           variant="h5" 
           sx={{ 
             fontWeight: 'bold', 
-            color: '#6727A6',
+            color: PURPLE,
             textAlign: 'center',
             mb: 2
           }}
@@ -69,15 +79,15 @@ export default function Home() {
                 label={filterLabels[filter]}
                 onClick={() => setActiveFilter(filter)}
                 sx={{
-                  backgroundColor: activeFilter === filter ? '#6727A6' : 'white',
-                  color: activeFilter === filter ? 'white' : '#6727A6',
+                  backgroundColor: activeFilter === filter ? PURPLE : WHITE,
+                  color: activeFilter === filter ? WHITE : PURPLE,
                   fontWeight: 600,
                   fontSize: 15,
                   px: 2.5,
                   height: 36,
-                  boxShadow: activeFilter === filter ? '0 2px 8px 0 rgba(103,39,166,0.10)' : 'none',
+                  boxShadow: activeFilter === filter ? `0 2px 8px 0 ${PURPLE}1A` : 'none',
                   '&:hover': {
-                    backgroundColor: activeFilter === filter ? '#5A1F8B' : '#F0F0F0',
+                    backgroundColor: activeFilter === filter ? PURPLE_DARK : GRAY_LIGHT,
                   },
                 }}
               />
@@ -87,16 +97,44 @@ export default function Home() {
 
         {/* Show collected games or empty state */}
         {collectedGames.length > 0 ? (
-          <Grid container spacing={4} alignItems="center" justifyContent="center">
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(3, 1fr)',
+                md: 'repeat(4, 1fr)'
+              },
+              gap: { xs: 0.5, md: 4 },
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             {collectedGames.map((game: CollectedGame) => (
-              <Grid key={game?.id} item xs={12} sm={6} md={3}>
+              <Box 
+                key={game?.id}
+                sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  minWidth: 0, 
+                  width: '100%',
+                  p: 0,
+                  m: 0,
+                  overflow: 'hidden',
+                }}
+              >
                 <Card 
                   sx={{ 
-                    width: 220,
+                    width: { xs: 114, md: 220 },
+                    height: { xs: 152, md: 270 },
                     borderRadius: 3,
                     position: 'relative',
                     cursor: 'pointer',
                     mx: 'auto',
+                    margin: '4px',
+                    maxWidth: { xs: 114, md: 220 },
+                    minHeight: { xs: 152, md: 270 },
+                    boxSizing: 'border-box',
+                    overflow: 'hidden',
                     '&:hover': {
                       transform: 'translateY(-4px)',
                       transition: 'transform 0.3s ease',
@@ -104,24 +142,35 @@ export default function Home() {
                   }}
                   onClick={() => handleGameClick(game.id)}
                 >
-                  <CardMedia
-                    component="div"
+                  <Box
                     sx={{
-                      height: 270,
-                      backgroundColor: '#E0E0E0',
+                      width: '100%',
+                      height: { xs: 100, md: 270 },
+                      minHeight: { xs: 161, md: 270 },
+                      maxHeight: { xs: 100, md: 270 },
+                      backgroundColor: GRAY,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#999',
+                      color: GRAY_DARK,
                       fontSize: '14px',
-                      backgroundImage: game.cover?.url ? 
-                        `url(https:${game.cover.url.replace('t_thumb', 't_cover_big')})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
+                      overflow: 'hidden',
+                      position: 'relative',
                     }}
                   >
-                    {!game.cover?.url ? 'Game Image' : ''}
-                  </CardMedia>
+                    {game.cover?.url ? (
+                      <Image
+                        src={`https:${game.cover.url.replace('t_thumb', 't_cover_big')}`}
+                        alt={game.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 600px) 114px, 220px"
+                        priority={true}
+                      />
+                    ) : (
+                      'Game Image'
+                    )}
+                  </Box>
                   {/* Show release year for newest/oldest filters */}
                   {(activeFilter === "Newest" || activeFilter === "Oldest") && game.first_release_date && (
                     <Box
@@ -129,8 +178,8 @@ export default function Home() {
                         position: 'absolute',
                         bottom: 40,
                         left: 4,
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        color: 'white',
+                        backgroundColor: BLACK_TRANSPARENT,
+                        color: WHITE,
                         padding: '2px 6px',
                         borderRadius: 1,
                         fontSize: '12px',
@@ -145,9 +194,9 @@ export default function Home() {
                       position: 'absolute',
                       top: 4,
                       right: 4,
-                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      backgroundColor: WHITE_TRANSPARENT,
                       '&:hover': {
-                        backgroundColor: 'white',
+                        backgroundColor: WHITE,
                       }
                     }}
                     onClick={(e) => {
@@ -158,15 +207,15 @@ export default function Home() {
                     <DeleteOutline sx={{ fontSize: 20 }} />
                   </IconButton>
                 </Card>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         ) : (
           <Box sx={{ textAlign: 'center', p: 8 }}>
-            <Typography sx={{ color: '#000', fontSize: '18px', mb: 2, fontWeight: 'bold' }}>
+            <Typography sx={{ color: BLACK, fontSize: '18px', mb: 2, fontWeight: 'bold' }}>
               Nothing collected yet
             </Typography>
-            <Typography sx={{ color: '#000', fontSize: '14px' }}>
+            <Typography sx={{ color: BLACK, fontSize: '14px' }}>
               Here you will see your collected games
             </Typography>
           </Box>

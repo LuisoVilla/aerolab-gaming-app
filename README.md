@@ -20,6 +20,31 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## IGDB Integration
+
+This project utiliza la API de [IGDB](https://www.igdb.com/) para obtener información de videojuegos (nombre, portada, rating, géneros, fecha de lanzamiento, etc).
+
+### Endpoints disponibles
+
+- `/api/games/popular?limit=20`: Devuelve los juegos más populares según IGDB.
+- `/api/games/trending?limit=20`: Devuelve los juegos trending según IGDB.
+- `/api/games?q=...`: Busca juegos por nombre.
+
+### Configuración
+
+Para usar IGDB necesitas credenciales de Twitch (Client ID y Client Secret) en tu archivo `.env.local`:
+
+```env
+TWITCH_CLIENT_ID=tu_client_id
+TWITCH_CLIENT_SECRET=tu_client_secret
+```
+
+La app obtiene un token de acceso y realiza peticiones a IGDB usando estos datos.
+
+### Documentación oficial
+- [IGDB API Docs](https://api-docs.igdb.com/)
+
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

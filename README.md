@@ -20,28 +20,29 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+
 ## IGDB Integration
 
-This project utiliza la API de [IGDB](https://www.igdb.com/) para obtener información de videojuegos (nombre, portada, rating, géneros, fecha de lanzamiento, etc).
+This project uses the [IGDB](https://www.igdb.com/) API to fetch video game information (name, cover, rating, genres, release date, etc).
 
-### Endpoints disponibles
+### Available Endpoints
 
-- `/api/games/popular?limit=20`: Devuelve los juegos más populares según IGDB.
-- `/api/games/trending?limit=20`: Devuelve los juegos trending según IGDB.
-- `/api/games?q=...`: Busca juegos por nombre.
+- `/api/games/popular?limit=20`: Returns the most popular games according to IGDB.
+- `/api/games/trending?limit=20`: Returns trending games according to IGDB.
+- `/api/games?q=...`: Searches games by name.
 
-### Configuración
+### Configuration
 
-Para usar IGDB necesitas credenciales de Twitch (Client ID y Client Secret) en tu archivo `.env.local`:
+To use IGDB, you need Twitch credentials (Client ID and Client Secret) in your `.env.local` file:
 
 ```env
-TWITCH_CLIENT_ID=tu_client_id
-TWITCH_CLIENT_SECRET=tu_client_secret
+TWITCH_CLIENT_ID=your_client_id
+TWITCH_CLIENT_SECRET=your_client_secret
 ```
 
-La app obtiene un token de acceso y realiza peticiones a IGDB usando estos datos.
+The app fetches an access token and makes requests to IGDB using these credentials.
 
-### Documentación oficial
+### Official Documentation
 - [IGDB API Docs](https://api-docs.igdb.com/)
 
 

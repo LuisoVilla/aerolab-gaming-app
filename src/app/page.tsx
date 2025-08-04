@@ -15,11 +15,18 @@ import { useState, useEffect } from "react";
 import { useGameStore } from "../store/gameStore";
 import { useRouter } from "next/navigation";
 import { useToastContext } from "../context/ToastContext";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Page() {
+  const { isAuthenticated } = useAuth();
   const [activeFilter, setActiveFilter] = useState<"Last added" | "Newest" | "Oldest">("Last added");
   const [loading, setLoading] = useState(true);
   const { getGamesByFilter, removeGame } = useGameStore();
+  
+  // Don't render anything if not authenticated (AuthWrapper handles this)
+  if (!isAuthenticated) {
+    return null;
+  }
   // Limpiar el store de juegos al cargar la página para evitar datos cacheados
   useEffect(() => {
     // Simula carga de datos

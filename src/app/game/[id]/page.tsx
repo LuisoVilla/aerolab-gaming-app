@@ -18,6 +18,7 @@ import { useToastContext } from "../../../context/ToastContext";
 import { BLACK, PURPLE_DARK } from "@/lib/constants/colors";
 import { formatDateMMDDYYYY } from "@/lib/utils/date";
 import ScreenshotModal from '@/components/ScreenshotModal';
+import { useAuth } from "../../../hooks/useAuth";
 
 interface Game {
   id: number;
@@ -55,6 +56,7 @@ interface Game {
 
 
 export default function GameDetail() {
+  const { isAuthenticated } = useAuth();
   const params = useParams();
   const router = useRouter();
   const [game, setGame] = useState<Game | null>(null);
@@ -64,6 +66,11 @@ export default function GameDetail() {
   const { showGameCollected } = useToastContext();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
+  
+  // Don't render anything if not authenticated (AuthWrapper handles this)
+  if (!isAuthenticated) {
+    return null;
+  }
   const handleScreenshotClick = (url: string) => {
     setModalImage(url);
     setModalOpen(true);

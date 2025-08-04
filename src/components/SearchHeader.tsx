@@ -6,7 +6,10 @@ import SearchCombobox from "./SearchCombobox";
 import { Swords } from "lucide-react";
 import { BLACK } from "@/lib/constants/colors";
 import styles from "./SearchHeader.module.css";
-import { Typography } from "@mui/material";
+import { Typography, Button, Avatar, Menu, MenuItem, Box } from "@mui/material";
+import { signOut } from "next-auth/react";
+import { useAuth } from "../hooks/useAuth";
+import { useState } from "react";
 
 interface SearchHeaderProps {
   children: React.ReactNode;
@@ -15,8 +18,24 @@ interface SearchHeaderProps {
 export default function SearchHeader({ children }: SearchHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isHomePage = pathname === '/';
   const isGameDetail = pathname?.startsWith('/game/');
+  const isAuthPage = pathname?.startsWith('/auth/');
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = async () => {
+    handleMenuClose();
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <div className={styles.header}>
@@ -27,6 +46,74 @@ export default function SearchHeader({ children }: SearchHeaderProps) {
             <ArrowBack />
             <span style={{ marginLeft: 8 }}>Back</span>
           </button>
+        )}
+
+        {/* Auth buttons - positioned absolutely */}
+        {!isAuthPage && (
+          <Box sx={{ 
+            position: 'absolute', 
+            right: 16, 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            zIndex: 10
+          }}>
+            {!isLoading && (
+              isAuthenticated ? (
+                <>
+                  <Avatar
+                    src={user?.image || undefined}
+                    onClick={handleMenuOpen}
+                    sx={{ 
+                      cursor: 'pointer',
+                      width: 36,
+                      height: 36,
+                      backgroundColor: '#6727A6'
+                    }}
+                  >
+                    {user?.name?.[0] || user?.email?.[0]}
+                  </Avatar>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                  >
+                    <MenuItem disabled>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {user?.name || user?.email}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleSignOut}>
+                      Sign Out
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={() => router.push('/auth/signin')}
+                  sx={{
+                    backgroundColor: '#6727A6',
+                    '&:hover': { backgroundColor: '#5A1E8A' },
+                    borderRadius: 2,
+                    px: 3,
+                    py: 1,
+                    fontSize: 14,
+                    fontWeight: 600
+                  }}
+                >
+                  Sign In
+                </Button>
+              )
+            )}
+          </Box>
         )}
 
         {/* Header content */}

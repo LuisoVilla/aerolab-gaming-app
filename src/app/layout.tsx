@@ -10,6 +10,8 @@ import {
 import { SearchProvider } from "../context/SearchContext";
 import { ToastProvider } from "../context/ToastContext";
 import SearchHeader from "../components/SearchHeader";
+import AuthProvider from "../components/AuthProvider";
+import AuthWrapper from "../components/AuthWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,19 +35,21 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <SearchProvider>
-        <ToastProvider>
-          <Box sx={{ 
-            minHeight: '100vh',
-            background: 'linear-gradient(180deg, #E7C0DB 0%, #F0D4E8 25%, #F8E8F4 50%, #FCEFF9 75%, #FFFFFF 100%)',
-            position: 'relative'
-          }}>
-            <SearchHeader >
-              {children}
-            </SearchHeader>
-          </Box>
-        </ToastProvider>
-      </SearchProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <ToastProvider>
+            <Box sx={{ 
+              minHeight: '100vh',
+              background: 'linear-gradient(180deg, #E7C0DB 0%, #F0D4E8 25%, #F8E8F4 50%, #FCEFF9 75%, #FFFFFF 100%)',
+              position: 'relative'
+            }}>
+              <AuthWrapper>
+                {children}
+              </AuthWrapper>
+            </Box>
+          </ToastProvider>
+        </SearchProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

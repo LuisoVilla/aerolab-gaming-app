@@ -26,6 +26,7 @@ interface SearchComboboxProps {
 export default function SearchCombobox({ placeholder = "Search gamesssss..." }: SearchComboboxProps) {
   const { searchQuery, setSearchQuery, searchGames, games, loading } = useSearch();
   const [isOpen, setIsOpen] = useState(false);
+  const [isActivelyTyping, setIsActivelyTyping] = useState(false);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,18 +46,20 @@ export default function SearchCombobox({ placeholder = "Search gamesssss..." }: 
     return () => clearTimeout(timeoutId);
   }, [searchQuery, searchGames]);
 
-  // Open dropdown when we have results
+  // Open dropdown when we have results and user is actively typing
   useEffect(() => {
-    if (searchQuery.trim() && !loading && games.length > 0) {
+    if (searchQuery.trim() && !loading && games.length > 0 && isActivelyTyping) {
       setIsOpen(true);
     } else if (!searchQuery.trim()) {
       setIsOpen(false);
+      setIsActivelyTyping(false);
     }
-  }, [searchQuery, loading, games]);
+  }, [searchQuery, loading, games, isActivelyTyping]);
 
   const handleSelectGame = (gameId: number, gameName: string) => {
     setSearchQuery(gameName);
     setIsOpen(false);
+    setIsActivelyTyping(false); // Stop showing dropdown after selection
     inputRef.current?.blur();
     router.push(`/game/${gameId}`);
   };
@@ -67,10 +70,12 @@ export default function SearchCombobox({ placeholder = "Search gamesssss..." }: 
 
   const handleClickAway = () => {
     setIsOpen(false);
+    setIsActivelyTyping(false);
   };
 
   const handleInputFocus = () => {
-    if (searchQuery.trim() && limitedGames.length > 0) {
+    // Only open if user is actively typing, not just on focus
+    if (searchQuery.trim() && limitedGames.length > 0 && isActivelyTyping) {
       setIsOpen(true);
     }
   };
@@ -78,10 +83,16 @@ export default function SearchCombobox({ placeholder = "Search gamesssss..." }: 
   const handleClearSearch = () => {
     setSearchQuery('');
     setIsOpen(false);
+    setIsActivelyTyping(true); // Allow dropdown to show when user starts typing again
     inputRef.current?.focus();
   };
 
   const showDropdown = isOpen && !loading && limitedGames.length > 0;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setIsActivelyTyping(true); // Mark as actively typing when user changes input
+  };
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
@@ -93,7 +104,7 @@ export default function SearchCombobox({ placeholder = "Search gamesssss..." }: 
           variant="outlined"
           size="small"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleInputChange}
           onFocus={handleInputFocus}
           InputProps={{
             startAdornment: (
@@ -230,7 +241,7 @@ export default function SearchCombobox({ placeholder = "Search gamesssss..." }: 
         )}
 
         {/* No Results Message */}
-        {isOpen && !loading && searchQuery.trim() && limitedGames.length === 0 && (
+        {isOpen && !loading && searchQuery.trim() && limitedGames.length === 0 && isActivelyTyping && (
           <Box sx={{
             position: 'absolute',
             top: '100%',

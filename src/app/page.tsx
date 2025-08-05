@@ -66,12 +66,16 @@ export default function Page() {
           gap: 2,
           mb: 4,
           ml: 0.5,
-          position: { xs: 'sticky', md: 'relative' },
-          top: { xs: 0, md: 'auto' },
-          zIndex: 100,
-          px: { xs: 2, md: 0 },
-          py: { xs: 1, md: 0 },
+          position: 'fixed',
+          top: '200px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1001,
           backgroundColor: 'transparent',
+          padding: '12px 24px',
+          borderRadius: '25px',
+          backdropFilter: 'blur(10px)',
+          minWidth: '300px',
         }}
       >
         {(["Last added", "Newest", "Oldest"] as const).map((filter) => (
@@ -94,6 +98,10 @@ export default function Page() {
           />
         ))}
       </Box>
+      
+      {/* Spacer for fixed buttons */}
+      <Box sx={{ height: '80px', mb: 2 }}></Box>
+      
       <Box sx={{ mb: 4 }}>
         <CollectedGamesGrid
           collectedGames={collectedGames}
